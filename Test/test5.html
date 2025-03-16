@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CNs Rubber Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-4.4.1.css" rel="stylesheet">
+    <style>
+      body {
+          background-color: #F1F6F9;
+          font-family: 'Roboto', sans-serif;
+          color: #333;
+          text-align: center;
+      }
+
+      .container {
+          max-width: 600px;
+          margin-top: 50px;
+          padding: 30px;
+          border-radius: 10px;
+          background: #FFFFFF;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-control {
+          border-radius: 25px;
+          box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn {
+          border-radius: 25px;
+          padding: 10px 20px;
+          font-size: 16px;
+      }
+
+      .btn-primary {
+          background-color: #5B8F29;
+          border: none;
+      }
+
+      .btn-primary:hover {
+          background-color: #4A7C24;
+      }
+
+      .result {
+          margin-top: 30px;
+          background: #EFF7E6;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          display: none;
+      }
+
+      h2 {
+          font-size: 26px;
+          font-weight: 700;
+          color: #5B8F29;
+          margin-bottom: 20px;
+      }
+
+      label {
+          font-weight: 600;
+          margin-top: 15px;
+      }
+
+      /* Lock Popup Style */
+      .lock-popup {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          display: none;
+          justify-content: center;
+          align-items: center;
+      }
+
+      .lock-popup-content {
+          background-color: white;
+          padding: 30px;
+          border-radius: 10px;
+          text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="main.html">CNS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="main.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="mailto:dreamteam.hackathonict@gmail.com">Email Us</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Explore more</a>
+                </div>
+              </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </div>
+      </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>⊹₊ ˚‧︵‿₊୨ CNs Rubber ୧₊‿︵‧ ˚ ₊⊹</h2>
+        <p id="inputMessage" class="alert alert-info">On free trial you can make only 10 inputs before the site will lock. Currently, you have <span id="remainingInputs">10</span> inputs left.</p>
+        <label for="dbh">Diameter at Breast Height (cm):</label>
+        <input type="number" id="dbh" class="form-control" placeholder="Enter DBH" required>
+        <label for="trees">Number of Trees:</label>
+        <input type="number" id="trees" class="form-control" placeholder="Enter number of trees" required>
+        <label for="area">Area in Hectares:</label>
+        <input type="number" id="area" class="form-control" placeholder="Enter area" required>
+        <button class="btn btn-primary mt-3" onclick="calculate()">Calculate</button>
+        
+        <div id="output" class="result"></div>
+    </div>
+
+    <!-- Lock Popup -->
+    <div id="lockPopup" class="lock-popup">
+        <div class="lock-popup-content">
+            <h4>The site is locked after 10 uses. Please click the button below to unlock.</h4>
+            <button class="btn btn-primary" onclick="unlockSite()">Unlock</button>
+        </div>
+    </div>
+
+    <script>
+        let inputCount = 0; // Counter for the number of inputs
+        let isUnlocked = false; // Flag to track if the site is unlocked
+
+        function calculate() {
+            // Check if the site is locked and unlocked
+            if (inputCount >= 10 && !isUnlocked) {
+                showLockPopup();
+                return;
+            }
+
+            let dbh = parseFloat(document.getElementById('dbh').value);
+            let trees = parseInt(document.getElementById('trees').value);
+            let area = parseFloat(document.getElementById('area').value);
+            
+            if (isNaN(dbh) || isNaN(trees) || isNaN(area) || dbh <= 0 || trees <= 0 || area <= 0) {
+                alert("Please enter valid values!");
+                return;
+            }
+
+            let agb = 0.0673 * dbh;
+            let bgb = 0.0162 * dbh;
+            let tb = agb + bgb;
+            let carbonStock = 0.0392 * dbh;
+            let carbonStorage = carbonStock / area;
+
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('output').innerHTML = `
+                <p><strong>=== Rubber Tree Info ===</strong></p>
+                <p>DBH: ${dbh.toFixed(1)} cm</p>
+                <p>Number of Trees: ${trees}</p>
+                <p>Area: ${area.toFixed(1)} hectares</p>
+                <p><strong>=== Biomass & Carbon Data ===</strong></p>
+                <p>Above-Ground Biomass (AGB): ${agb.toFixed(4)} Kg/tree</p>
+                <p>Below-Ground Biomass (BGB): ${bgb.toFixed(4)} Kg/tree</p>
+                <p>Total Biomass (TB): ${tb.toFixed(4)} Kg/tree</p>
+                <p>Carbon Stock: ${carbonStock.toFixed(4)} KgC</p>
+                <p>Carbon Storage per Unit: ${carbonStorage.toFixed(4)} KgC/ha</p>
+            `;
+
+            // Update input count and remaining inputs message
+            inputCount++;
+            updateInputMessage();
+        }
+
+        function showLockPopup() {
+            document.getElementById('lockPopup').style.display = 'flex';
+        }
+
+        function unlockSite() {
+            isUnlocked = true; // Unlock the site
+            inputCount = 0; // Reset the counter
+            document.getElementById('lockPopup').style.display = 'none'; // Hide the popup
+            updateInputMessage(); // Reset the message
+            alert("The site is now unlocked. You can input as many times as you like.");
+        }
+
+        function updateInputMessage() {
+            if (isUnlocked) {
+                document.getElementById('inputMessage').textContent = "The site is unlocked. You can now input as many times as you like.";
+            } else {
+                const remaining = 10 - inputCount;
+                document.getElementById('remainingInputs').textContent = remaining;
+                if (remaining <= 0) {
+                    document.getElementById('inputMessage').textContent = "You have reached the maximum number of inputs. The site is locked.";
+                }
+            }
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
