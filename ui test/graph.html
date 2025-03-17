@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Level Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        canvas { max-width: 600px; margin: auto; }
+        .alert { color: red; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+    <h2>Carbon Level Monitor</h2>
+    <p class="alert" id="alertMsg">⚠️ Carbon level exceeded!</p>
+    <canvas id="carbonChart"></canvas>
+
+    <script>
+        let ctx = document.getElementById('carbonChart').getContext('2d');
+        let carbonData = [];
+        let timeLabels = [];
+        let time = 0;
+        let loopCount = 0;
+        let exceedNotified = false;
+        
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Carbon Level',
+                    data: carbonData,
+                    borderColor: 'blue',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Time (s)' } },
+                    y: { title: { display: true, text: 'Carbon Level' }, min: 0, max: 15 }
+                }
+            }
+        });
+        
+        function updateCarbonLevel() {
+            if (loopCount < 3) {
+                carbonData.push(5 + loopCount * 2); // Increment in each loop
+            } else {
+                carbonData.push(Math.random() * 5 + 8); // Random fluctuation after 3 loops
+            }
+            
+            timeLabels.push(time);
+            time++;
+
+            if (carbonData[carbonData.length - 1] > 10 && !exceedNotified) {
+                document.getElementById('alertMsg').style.display = 'block';
+                exceedNotified = true;
+            }
+
+            chart.update();
+            
+            if (time % 10 === 0) {
+                loopCount++;
+                exceedNotified = false;
+            }
+            
+            let nextInterval = loopCount < 3 ? 1000 : Math.random() * 2000 + 1000;
+            setTimeout(updateCarbonLevel, nextInterval);
+        }
+        
+        updateCarbonLevel();
+    </script>
+</body>
+</html>
