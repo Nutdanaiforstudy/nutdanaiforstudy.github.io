@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DREAMTEAM DRAFT</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .chart-container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <h1 class="display-5 fw-bold">⊹₊ ˚‧︵‿₊୨ CNs Rubber Data ୧₊‿︵‧ ˚ ₊⊹</h1>
+            <p class="lead">Real-time data visualization from ESP32 on ThinkSpeak.</p>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-container">
+        <canvas id="lineChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                // Replace this URL with your actual ThinkSpeak Read API URL
+                const response = await fetch("https://api.thingspeak.com/channels/2887330/feeds.json?api_key=J9WPDQ1YC5BUY5AU&results=10");
+                const data = await response.json();
+
+                const feeds = data.feeds;
+                // Format timestamps to show full date and time (e.g., March 23, 2025, 12:30 PM)
+                const labels = feeds.map(feed => {
+                    const date = new Date(feed.created_at);
+                    return date.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+                });
+
+                const values = feeds.map(feed => parseFloat(feed.field1)); // Assuming your data is in "field1"
+
+                renderCharts(labels, values);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        function renderCharts(labels, values) {
+            // Line Chart (Graph)
+            const ctx1 = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sensor Data',
+                        data: values,
+                        borderColor: 'blue',
+                        borderWidth: 2
+                    }]
+                }
+            });
+
+            // Pie Chart
+            const ctx2 = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: ["Low", "Medium", "High"],
+                    datasets: [{
+                        data: [
+                            values.filter(value => value < 20).length,   // Low values (example)
+                            values.filter(value => value >= 20 && value < 30).length,   // Medium values
+                            values.filter(value => value >= 30).length   // High values
+                        ],
+                        backgroundColor: ['red', 'yellow', 'green']
+                    }]
+                }
+            });
+        }
+
+        fetchData(); // Initial data fetch
+        setInterval(fetchData, 10000); // Auto-refresh every 10 seconds to get the latest data
+    </script>
+</body>
+</html>
