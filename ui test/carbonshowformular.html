@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carbon Footprint Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+          background-color: #F4F6F9;
+          font-family: 'Roboto', sans-serif;
+          color: #333;
+          text-align: center;
+      }
+      .container {
+          max-width: 650px;
+          margin-top: 50px;
+          padding: 30px;
+          border-radius: 12px;
+          background: #FFFFFF;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+      .form-control {
+          border-radius: 25px;
+          padding: 15px;
+          margin-bottom: 15px;
+      }
+      .btn {
+          border-radius: 25px;
+          padding: 12px 30px;
+          transition: all 0.3s ease;
+      }
+      .btn-primary {
+          background-color: #5B8F29;
+          border: none;
+      }
+      .btn-primary:hover {
+          background-color: #4A7C24;
+      }
+      .result {
+          margin-top: 30px;
+          background: #E9F7EF;
+          padding: 20px;
+          border-radius: 10px;
+          display: none;
+          text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h2>Carbon Footprint Calculator</h2>
+        <p><strong>Calculation Formulas:</strong></p>
+        <p>Electricity CO2: <code>electricity (kWh) × 0.5</code></p>
+        <p>Transportation CO2: <code>miles driven × 0.4</code></p>
+        <p>Food CO2: <code>kg of meat × 6.5</code></p>
+        
+        <label for="electricity">Electricity Usage (kWh per month):</label>
+        <input type="number" id="electricity" class="form-control" placeholder="Enter kWh" required>
+        
+        <label for="transport">Transportation (miles per week):</label>
+        <input type="number" id="transport" class="form-control" placeholder="Enter miles" required>
+        
+        <label for="food">Food Consumption (kg of meat per week):</label>
+        <input type="number" id="food" class="form-control" placeholder="Enter kg" required>
+        
+        <button class="btn btn-primary mt-3" onclick="calculateFootprint()">Calculate</button>
+        
+        <div id="output" class="result"></div>
+    </div>
+    
+    <script>
+        function calculateFootprint() {
+            let electricity = parseFloat(document.getElementById('electricity').value);
+            let transport = parseFloat(document.getElementById('transport').value);
+            let food = parseFloat(document.getElementById('food').value);
+            
+            if (isNaN(electricity) || isNaN(transport) || isNaN(food) || electricity < 0 || transport < 0 || food < 0) {
+                alert("Please enter valid values!");
+                return;
+            }
+
+            let electricityCO2 = electricity * 0.5;
+            let transportCO2 = transport * 0.4;
+            let foodCO2 = food * 6.5;
+            let totalCO2 = electricityCO2 + transportCO2 + foodCO2;
+            
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('output').innerHTML = `
+                <p><strong>Your Carbon Footprint</strong></p>
+                <p>Electricity: ${electricityCO2.toFixed(2)} kg CO2/month</p>
+                <p>Transportation: ${transportCO2.toFixed(2)} kg CO2/week</p>
+                <p>Food: ${foodCO2.toFixed(2)} kg CO2/week</p>
+                <p><strong>Total: ${totalCO2.toFixed(2)} kg CO2</strong></p>
+            `;
+        }
+    </script>
+  </body>
+</html>
