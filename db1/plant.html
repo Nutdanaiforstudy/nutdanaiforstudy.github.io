@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การปลูกยางพารา</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #C04B4B, #7D9B36); /* Complementary gradient */
+            font-family: 'Georgia', serif;
+            color: #333;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 40px;
+            color: #3c3c3c;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .flashcard {
+            width: 90%;
+            max-width: 800px;
+            height: 220px;
+            margin: 20px auto;
+            background-color: #7D9B36;
+            color: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .flashcard:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+        .flashcard-inner {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            border-radius: 20px;
+        }
+        .flashcard.flip .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard .front, .flashcard .back {
+            position: absolute;
+            backface-visibility: hidden;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: left;
+            border-radius: 20px;
+        }
+        .flashcard .back {
+            transform: rotateY(180deg);
+            background-color: #f3f3f3;
+            color: #444;
+            padding: 30px;
+            font-size: 18px;
+            overflow-y: auto;
+            border-radius: 20px;
+        }
+        .flashcard .front {
+            background-color: #7D9B36;
+            color: white;
+            font-size: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            font-weight: bold;
+        }
+        .section {
+            margin-top: 50px;
+        }
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: #444;
+            font-weight: 600;
+        }
+        .section-content {
+            font-size: 1.1em;
+            text-align: left;
+            color: #777;
+            line-height: 1.8;
+        }
+        /* For Mobile Devices */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2em;
+            }
+            .flashcard {
+                height: 200px;
+                font-size: 18px;
+            }
+            .flashcard .back {
+                font-size: 16px;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+
+    <div class="container">
+        <h1>การปลูกยางพารา</h1>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>ปัจจัยด้านสภาพแวดล้อม</strong>
+                </div>
+                <div class="back">
+                    <strong>1.1 ดิน</strong><br>
+                    <strong>pH ดิน:</strong> ควรอยู่ระหว่าง 4.5 - 6.5 เพื่อให้รากต้นยางดูดซึมธาตุอาหารได้ดี<br>
+                    <strong>ความชื้นในดิน:</strong> อยู่ที่ 50-70% ของความจุอุ้มน้ำของดิน เพื่อให้ต้นยางเติบโตได้ดีและช่วยรักษาความชื้นให้จุลินทรีย์ทำงานในการสะสมคาร์บอน<br>
+                    <strong>องค์ประกอบของดิน:</strong> ควรเป็น ดินร่วนปนทรายหรือดินร่วนเหนียว เพื่อการระบายน้ำที่ดี<br>
+                    <strong>การระบายน้ำ:</strong> ควรมีการระบายน้ำที่ดีเพื่อป้องกันรากเน่า ซึ่งจะช่วยให้ต้นไม้มีอายุยืนและสะสมคาร์บอนได้มากขึ้น
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>1.2 ปริมาณน้ำฝนและความชื้นสัมพัทธ์</strong>
+                </div>
+                <div class="back">
+                    <strong>ปริมาณน้ำฝนที่เหมาะสม:</strong> อยู่ที่ 1,500 - 2,500 มม./ปี<br>
+                    <strong>ความชื้นสัมพัทธ์:</strong> ควรอยู่ที่ 75-85% เพื่อป้องกันความเครียดของต้นไม้
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>1.3 ระดับความสูงจากระดับน้ำทะเล</strong>
+                </div>
+                <div class="back">
+                    ควรอยู่ในช่วง 200 - 600 เมตร จากระดับน้ำทะเล เนื่องจากอุณหภูมิและความชื้นอยู่ในระดับที่เหมาะสม
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>1.4 อุณหภูมิและแสงแดด</strong>
+                </div>
+                <div class="back">
+                    <strong>อุณหภูมิที่เหมาะสม:</strong> 25-30°C<br>
+                    <strong>แสงแดดที่ต้องการ:</strong> ควรได้รับแสงแดดอย่างน้อย 6 ชั่วโมง/วัน เพื่อกระบวนการสังเคราะห์แสงที่ดี
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>2.1 ระยะปลูกและความหนาแน่น</strong>
+                </div>
+                <div class="back">
+                    <strong>ปลูกแบบมาตรฐาน:</strong> 2.5 × 7 เมตร (450-570 ต้น/เฮกตาร์)<br>
+                    <strong>ปลูกเพื่อกักเก็บคาร์บอนสูงสุด:</strong> 3 × 8 เมตร หรือ 4 × 10 เมตร (250-400 ต้น/เฮกตาร์)<br>
+                    <strong>ปลูกแบบผสมผสาน:</strong> ปลูกพืชคลุมดินหรือไม้ยืนต้นอื่นร่วมด้วย
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>2.2 การจัดการปุ๋ยและอินทรียวัตถุ</strong>
+                </div>
+                <div class="back">
+                    ใส่ ปุ๋ยอินทรีย์ (ปุ๋ยหมัก ปุ๋ยคอก) เพื่อเพิ่มปริมาณคาร์บอนในดิน<br>
+                    ใช้ปุ๋ยเคมีให้น้อยที่สุดเพื่อลดผลกระทบต่อดินและจุลินทรีย์<br>
+                    ปล่อยเศษใบไม้ กิ่งไม้ ให้ย่อยสลายในพื้นที่เพื่อเพิ่มอินทรียวัตถุ
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>2.5 การกรีดยางและการดูแลต้นไม้</strong>
+                </div>
+                <div class="back">
+                    ใช้วิธี กรีดเว้นวัน เพื่อลดความเครียดของต้นไม้<br>
+                    หลีกเลี่ยงการกรีดต้นยางที่อายุต่ำกว่า 7 ปี เพราะต้นไม้ยังสะสมคาร์บอนไม่เต็มที่<br>
+                    ปลูกต้นไม้ทดแทนเมื่อต้นยางอายุครบ 25-30 ปี
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>3.1 การปลูกพืชร่วมเพื่อเพิ่มการกักเก็บคาร์บอน</strong>
+                </div>
+                <div class="back">
+                    ปลูก ต้นไม้อื่นร่วมกัน เช่น ไม้ยืนต้นหรือพืชคลุมดิน เพื่อเพิ่มการดูดซึมคาร์บอน<br>
+                    ใช้ระบบ Agroforestry (วนเกษตร) เช่น ปลูกยางพาราร่วมกับไม้ป่า เช่น สัก มะฮอกกานี
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard" onclick="flipCard(this)">
+            <div class="flashcard-inner">
+                <div class="front">
+                    <strong>3.2 การอนุรักษ์ระบบนิเวศรอบสวนยาง</strong>
+                </div>
+                <div class="back">
+                    รักษาพื้นที่ป่ารอบสวนยาง เพื่อสร้างสมดุลของระบบนิเวศ<br>
+                    ป้องกันการบุกรุกของสารเคมีและมลพิษ ที่อาจทำลายคุณภาพดินและจุลินทรีย์
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function flipCard(card) {
+            card.classList.toggle("flip");
+        }
+    </script>
+
+</body>
+</html>
