@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emissions Calculator & Add Carbon Credit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            background-color: #F1F6F9;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-top: 40px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            padding: 30px;
+            border-radius: 10px;
+            background: #FFFFFF;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Styles */
+        .form-control {
+            border-radius: 25px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: #5B8F29;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #4A7C24;
+        }
+
+        .result {
+            margin-top: 30px;
+            background: #EFF7E6;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        /* Button Styles */
+        .go-back {
+            background-color: #6c757d;
+        }
+
+        .go-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* Add space between form elements and buttons */
+form label, form input, form select {
+    margin-bottom: 15px;
+}
+
+/* Add space between the last input field and buttons */
+.buttons-container {
+    margin-top: 20px; /* Increase this value if needed for more space */
+}
+
+/* Add extra space to the button itself */
+button {
+    margin-top: 10px;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+    form {
+        width: 90%;
+        padding: 20px;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 20px; /* Increase space for mobile devices */
+    }
+
+    .buttons-container {
+        flex-direction: column;
+        gap: 15px; /* Adjust the gap between buttons for better spacing */
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>Add New Carbon Credit Entry</h2>
+
+        <form onsubmit="addEntry(event)">
+            <label for="user">User:</label>
+            <input type="text" id="user" required placeholder="Enter user's name">
+
+            <label for="carbonCredit">User Province:</label>
+            <input type="text" id="carbonCredit"  required placeholder="Enter User Province">
+
+            <label for="price">Date of Data:</label>
+            <input type="text" id="price"  required placeholder="Enter Date of Data">
+
+            <hr>
+
+            <h2>Carbon Emissions Calculator</h2>
+
+            <label for="fertilizerType">Select Fertilizer Type:</label>
+            <select id="fertilizerType" class="form-control">
+                <option value="1">Urea (46-0-0)</option>
+                <option value="2">Ammonium Nitrate (34-0-0)</option>
+                <option value="3">Potassium (0-0-60)</option>
+                <option value="4">Phosphate (DAP 18-46-0)</option>
+                <option value="5">Organic (Manure, Compost)</option>
+            </select>
+
+            <label for="fertilizerAmount">Amount of Fertilizer (kg/rai/year):</label>
+            <input type="number" id="fertilizerAmount" class="form-control" placeholder="Enter fertilizer amount" required>
+
+            <label for="fuelType">Select Fuel Type:</label>
+            <select id="fuelType" class="form-control">
+                <option value="1">Diesel</option>
+                <option value="2">Gasoline</option>
+            </select>
+
+            <label for="fuelAmount">Amount of Fuel (liters/rai/year):</label>
+            <input type="number" id="fuelAmount" class="form-control" placeholder="Enter fuel amount" required>
+
+            <label for="landBefore">Land Type Before Change:</label>
+            <select id="landBefore" class="form-control">
+                <option value="1">Natural Forest</option>
+                <option value="2">Secondary Forest</option>
+                <option value="3">Old Agricultural Land</option>
+                <option value="4">15-Year-Old Rubber Plantation</option>
+            </select>
+
+            <label for="landAfter">Land Type After Change:</label>
+            <select id="landAfter" class="form-control">
+                <option value="1">Forest</option>
+                <option value="2">Non-Forest</option>
+            </select>
+
+            <label for="transitionTime">Transition Time (years):</label>
+            <input type="number" id="transitionTime" class="form-control" placeholder="Enter transition time" required>
+
+            <div class="buttons-container">
+                <button type="submit">Add Entry</button>
+                <button class="go-back" onclick="window.location.href='index.html'">Go Back</button>
+            </div>
+        </form>
+
+        <div id="output" class="result"></div>
+    </div>
+
+    <script>
+        if (!localStorage.getItem("deviceID")) {
+            localStorage.setItem("deviceID", "Device-" + Math.random().toString(36).substr(2, 9));
+        }
+        let deviceID = localStorage.getItem("deviceID");
+
+        function addEntry(event) {
+            event.preventDefault();
+
+            // Get form data
+            let user = document.getElementById("user").value;
+            // let carbonCredit = parseFloat(document.getElementById("carbonCredit").value);
+            // let price = parseFloat(document.getElementById("price").value);
+            let carbonCredit = document.getElementById("carbonCredit").value;  // Now it's a string
+            let price = document.getElementById("price").value;  // Now it's a string
+
+
+            // Carbon emissions calculation
+            let fertilizerType = parseInt(document.getElementById('fertilizerType').value);
+            let fertilizerAmount = parseFloat(document.getElementById('fertilizerAmount').value);
+            let fuelType = parseInt(document.getElementById('fuelType').value);
+            let fuelAmount = parseFloat(document.getElementById('fuelAmount').value);
+            let landBefore = parseInt(document.getElementById('landBefore').value);
+            let landAfter = parseInt(document.getElementById('landAfter').value);
+            let transitionTime = parseInt(document.getElementById('transitionTime').value);
+
+            // Emission factors
+            const fertilizerEmissionFactors = {
+                1: 5.25, 2: 3.45, 3: 0.85, 4: 2.25, 5: 0.3
+            };
+            const fuelEmissionFactors = {
+                1: 2.68, 2: 2.32
+            };
+            const landStockBefore = {
+                1: 125, 2: 75, 3: 20, 4: 55
+            };
+            const landStockAfter = 55;
+
+            let emissionFactor = fertilizerEmissionFactors[fertilizerType] || 0;
+            let fuelEmissionFactor = fuelEmissionFactors[fuelType] || 0;
+            let carbonStockBeforeValue = landStockBefore[landBefore] || 0;
+
+            let emissionsFertilizer = (fertilizerAmount * emissionFactor) / 1000; 
+            let emissionsFuel = (fuelAmount * fuelEmissionFactor) / 1000;
+            let emissionsLandUse = (carbonStockBeforeValue - landStockAfter) / transitionTime;
+
+            let totalEmissions = emissionsFertilizer + emissionsFuel + emissionsLandUse;
+
+            // Add the data to localStorage
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            let newID = data.length > 0 ? data[data.length - 1].ID + 1 : 1;
+            let newEntry = { 
+                ID: newID,
+                User: user,
+                CarbonCredit: carbonCredit,
+                Price: price,
+                FertilizerEmissions: emissionsFertilizer.toFixed(3),
+                FuelEmissions: emissionsFuel.toFixed(3),
+                LandUseEmissions: emissionsLandUse.toFixed(3),
+                TotalEmissions: totalEmissions.toFixed(3),
+                Device: deviceID
+            };
+
+            data.push(newEntry);
+            localStorage.setItem("carbonData", JSON.stringify(data));
+
+            // Notify admin via WebSocket (if needed)
+            sendUpdateToAdmin(newEntry);
+
+            // Provide feedback to user
+            alert("Entry added successfully!");
+            window.location.href = "index.html";
+        }
+
+        function sendUpdateToAdmin(entry) {
+            const ws = new WebSocket("ws://localhost:8080");
+            ws.onopen = () => ws.send(JSON.stringify(entry));
+        }
+    </script>
+</body>
+</html>

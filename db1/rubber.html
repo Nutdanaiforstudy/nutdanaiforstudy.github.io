@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubber Tree Biomass Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            border-radius: 25px;
+            margin-top: 15px;
+        }
+
+        .result {
+            margin-top: 30px;
+            background: #eff7e6;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        label, input, select {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Rubber Tree Biomass Calculator</h2>
+    <form id="treeForm">
+        <div>
+            <label for="GBH">Girth at Breast Height (GBH) (cm):</label>
+            <input type="number" id="GBH" required class="form-control" placeholder="Enter GBH in cm">
+        </div>
+        <div>
+            <label for="treeCount">Number of Trees per Rai:</label>
+            <input type="number" id="treeCount" required class="form-control" placeholder="Enter number of trees">
+        </div>
+        <div>
+            <label for="area">Area (Rai):</label>
+            <input type="number" id="area" required class="form-control" placeholder="Enter area in rai">
+        </div>
+        <button type="submit" class="btn btn-primary">Calculate Biomass</button>
+    </form>
+
+    <div id="result" class="result">
+        <h3>Calculation Result</h3>
+        <p id="biomassResult"></p>
+        <p id="carbonStorageResult"></p>
+        <p id="totalCarbonStorageResult"></p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('treeForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Get input values
+        let GBH = parseFloat(document.getElementById('GBH').value);
+        let treeCount = parseInt(document.getElementById('treeCount').value);
+        let area = parseFloat(document.getElementById('area').value);
+
+        // Calculate DBH, AGB, STUMP, BIOMASS, CS, and ACS
+        let DBH = GBH / Math.PI;
+        let AGB = 0.05155 * Math.pow(DBH, 2.783);
+        let STUMP = 0.02440 * Math.pow(DBH, 2.470);
+        let BIOMASS = AGB + STUMP;
+        let CS = BIOMASS * 0.47 / 1000;  // Carbon Storage per Tree (tons)
+        let ACS = BIOMASS * 0.47 * treeCount * area / 1000;  // Total Carbon Storage (tons)
+
+        // Display results
+        document.getElementById('biomassResult').innerText = "Biomass (AGB + Stump): " + BIOMASS.toFixed(4) + " kg";
+        document.getElementById('carbonStorageResult').innerText = "Carbon Storage per Tree: " + CS.toFixed(4) + " tons/tree";
+        document.getElementById('totalCarbonStorageResult').innerText = "Total Carbon Storage: " + ACS.toFixed(4) + " tons";
+
+        // Show result section
+        document.getElementById('result').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
