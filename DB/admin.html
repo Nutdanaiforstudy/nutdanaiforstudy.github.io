@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .device-section { margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; }
+        table { width: 80%; margin: auto; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        button { margin: 10px; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Admin Dashboard</h2>
+    
+    <div id="device-sections"></div>
+
+    <script>
+        function loadData() {
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            let groupedData = {};
+
+            data.forEach(entry => {
+                if (!groupedData[entry.Device]) {
+                    groupedData[entry.Device] = [];
+                }
+                groupedData[entry.Device].push(entry);
+            });
+
+            const container = document.getElementById("device-sections");
+            container.innerHTML = ""; 
+
+            for (let device in groupedData) {
+                let section = `<div class="device-section">
+                    <h3>Device: ${device}</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Carbon Credit</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                groupedData[device].forEach((entry, index) => {
+                    section += `<tr>
+                        <td>${entry.ID}</td>
+                        <td contenteditable="true" oninput="updateValue('${device}', ${index}, 'User', this.innerText)">${entry.User}</td>
+                        <td contenteditable="true" oninput="updateValue('${device}', ${index}, 'CarbonCredit', this.innerText)">${entry.CarbonCredit}</td>
+                        <td contenteditable="true" oninput="updateValue('${device}', ${index}, 'Price', this.innerText)">${entry.Price}</td>
+                        <td><button onclick="deleteRow('${device}', ${index})">Delete</button></td>
+                    </tr>`;
+                });
+
+                section += `</tbody></table></div>`;
+                container.innerHTML += section;
+            }
+        }
+
+        function updateValue(device, index, field, value) {
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            let filteredData = data.filter(entry => entry.Device === device);
+            filteredData[index][field] = field === "CarbonCredit" || field === "Price" ? parseFloat(value) || 0 : value;
+
+            // Save updated data
+            let newData = data.map(entry => entry.Device === device ? filteredData.find(e => e.ID === entry.ID) || entry : entry);
+            localStorage.setItem("carbonData", JSON.stringify(newData));
+        }
+
+        function deleteRow(device, index) {
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            let filteredData = data.filter(entry => entry.Device === device);
+            filteredData.splice(index, 1);
+
+            // Save updated data
+            let newData = data.filter(entry => entry.Device !== device).concat(filteredData);
+            localStorage.setItem("carbonData", JSON.stringify(newData));
+            loadData();
+        }
+
+        // WebSocket for real-time updates
+        const ws = new WebSocket("ws://localhost:8080");
+        ws.onmessage = (event) => {
+            let newEntry = JSON.parse(event.data);
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            data.push(newEntry);
+            localStorage.setItem("carbonData", JSON.stringify(data));
+            loadData();
+        };
+
+        loadData();
+    </script>
+</body>
+</html>
