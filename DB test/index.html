@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Credit Database</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        table { width: 80%; margin: 20px auto; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        button { margin: 10px; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Carbon Credit Database</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Carbon Credit</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="data-table"></tbody>
+    </table>
+
+    <h3>Carbon Credit Distribution</h3>
+    <canvas id="carbonChart"></canvas>
+
+    <button onclick="saveData()">Save Changes</button>
+    <button onclick="window.location.href='form.html'">Add New Entry</button>
+
+    <script>
+        let data = [];
+
+        function loadData() {
+            data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            displayData();
+            updateChart();
+        }
+
+        function displayData() {
+            const tableBody = document.getElementById("data-table");
+            tableBody.innerHTML = ""; 
+            
+            data.forEach((entry, index) => {
+                let row = `<tr>
+                    <td>${entry.ID}</td>
+                    <td contenteditable="true" oninput="updateValue(${index}, 'User', this.innerText)">${entry.User}</td>
+                    <td contenteditable="true" oninput="updateValue(${index}, 'CarbonCredit', this.innerText)">${entry.CarbonCredit}</td>
+                    <td contenteditable="true" oninput="updateValue(${index}, 'Price', this.innerText)">${entry.Price}</td>
+                    <td><button onclick="deleteRow(${index})">Delete</button></td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function updateValue(index, field, value) {
+            data[index][field] = field === "CarbonCredit" || field === "Price" ? parseFloat(value) || 0 : value;
+            saveData();
+            updateChart();
+        }
+
+        function deleteRow(index) {
+            data.splice(index, 1);
+            saveData();
+            displayData();
+            updateChart();
+        }
+
+        function saveData() {
+            localStorage.setItem("carbonData", JSON.stringify(data));
+            alert("Data saved successfully!");
+        }
+
+        function updateChart() {
+            let users = data.map(entry => entry.User);
+            let credits = data.map(entry => entry.CarbonCredit);
+
+            const ctx = document.getElementById("carbonChart").getContext("2d");
+            if (window.myChart) window.myChart.destroy();
+            window.myChart = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: users,
+                    datasets: [{ data: credits, backgroundColor: ["red", "blue", "green", "yellow"] }]
+                }
+            });
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Carbon Credit</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        form { width: 300px; margin: auto; text-align: left; }
+        label, input { display: block; margin: 10px 0; }
+        button { margin-top: 10px; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Add New Carbon Credit Entry</h2>
+
+    <form onsubmit="addEntry(event)">
+        <label>User: <input type="text" id="user" required></label>
+        <label>Carbon Credit: <input type="number" id="carbonCredit" step="0.1" required></label>
+        <label>Price: <input type="number" id="price" step="0.1" required></label>
+        <button type="submit">Add Entry</button>
+    </form>
+
+    <button onclick="window.location.href='index.html'">Go Back</button>
+
+    <script>
+        function addEntry(event) {
+            event.preventDefault();
+
+            let user = document.getElementById("user").value;
+            let carbonCredit = parseFloat(document.getElementById("carbonCredit").value);
+            let price = parseFloat(document.getElementById("price").value);
+
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            let newID = data.length > 0 ? data[data.length - 1].ID + 1 : 1;
+
+            let newEntry = { ID: newID, User: user, CarbonCredit: carbonCredit, Price: price };
+            data.push(newEntry);
+            localStorage.setItem("carbonData", JSON.stringify(data));
+
+            alert("Entry added successfully!");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
