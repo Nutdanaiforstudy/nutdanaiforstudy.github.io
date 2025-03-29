@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Carbon Credit</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-top: 40px;
+            color: #333;
+        }
+
+        /* Form Styles */
+        form {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px 0;
+            width: 48%;  /* Set button width to 48% */
+            display: inline-block;  /* Make them appear side by side */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Go Back Button */
+        .go-back {
+            background-color: #6c757d;
+        }
+
+        .go-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* Align buttons */
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px; /* Ensure space between buttons */
+        }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            form {
+                width: 90%;
+                padding: 20px;
+            }
+
+            button {
+                width: 100%; /* Ensure buttons are full width on small screens */
+            }
+
+            .buttons-container {
+                flex-direction: column; /* Stack buttons on top of each other */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Add New Carbon Credit Entry</h2>
+
+    <form onsubmit="addEntry(event)">
+        <label for="user">User:</label>
+        <input type="text" id="user" required placeholder="Enter user's name">
+
+        <label for="carbonCredit">Carbon Credit:</label>
+        <input type="number" id="carbonCredit" step="0.1" required placeholder="Enter carbon credit value">
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" step="0.1" required placeholder="Enter price">
+
+        <div class="buttons-container">
+            <button type="submit">Add Entry</button>
+            <button class="go-back" onclick="window.location.href='index.html'">Go Back</button>
+        </div>
+    </form>
+
+    <script>
+        // Generate unique device ID if not set
+        if (!localStorage.getItem("deviceID")) {
+            localStorage.setItem("deviceID", "Device-" + Math.random().toString(36).substr(2, 9));
+        }
+        let deviceID = localStorage.getItem("deviceID");
+
+        function addEntry(event) {
+            event.preventDefault();
+
+            let user = document.getElementById("user").value;
+            let carbonCredit = parseFloat(document.getElementById("carbonCredit").value);
+            let price = parseFloat(document.getElementById("price").value);
+
+            let data = JSON.parse(localStorage.getItem("carbonData")) || [];
+            let newID = data.length > 0 ? data[data.length - 1].ID + 1 : 1;
+
+            let newEntry = { ID: newID, User: user, CarbonCredit: carbonCredit, Price: price, Device: deviceID };
+            data.push(newEntry);
+            localStorage.setItem("carbonData", JSON.stringify(data));
+
+            // Notify admin page via WebSocket
+            sendUpdateToAdmin(newEntry);
+
+            // Provide feedback to user
+            alert("Entry added successfully!");
+            window.location.href = "index.html";
+        }
+
+        function sendUpdateToAdmin(entry) {
+            const ws = new WebSocket("ws://localhost:8080");
+            ws.onopen = () => ws.send(JSON.stringify(entry));
+        }
+    </script>
+</body>
+</html>
